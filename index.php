@@ -1,54 +1,48 @@
 <?php
-session_start();
-if (isset($_SESSION['login']) && $_SESSION['login'] === true) {
-    header("Location: beranda.php");
-    exit;
-}
+include '../header.php';
+require_once __DIR__ . '/../class/Barang.php';
+$barangObj = new Barang();
+$data_barang = $barangObj->tampil_data();
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Informasi Stok Gudang Barang</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-</head>
-<body class="login-body">
-    <div class="login-container">
-        <h2>Sistem Informasi Stok Gudang Barang</h2>
-        <h3>Politeknik Negeri Subang</h3>
-        
-        <div style="margin: 20px 0;">
-            <img src="https://cdn-icons-png.flaticon.com/512/3050/3050430.png" alt="Store Icon" style="width: 80px;">
-        </div>
 
-        <p style="margin-bottom: 15px; font-weight: 500;">SILAHKAN LOGIN</p>
-        
+<div class="mb-20">
+    <h2>Data Barang</h2>
+    <a href="tambah.php" class="btn btn-primary" style="width: auto;">+ Tambah Data</a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Kode Barang</th>
+            <th>Jenis Barang</th>
+            <th>Nama Barang</th>
+            <th>Stok</th>
+            <th>Harga Beli</th>
+            <th>Harga Jual</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
         <?php
-        if (isset($_GET['pesan'])) {
-            if ($_GET['pesan'] == "gagal") {
-                echo "<p style='color: red; margin-bottom: 10px; font-size: 12px;'>Login gagal! Username dan password salah!</p>";
-            } else if ($_GET['pesan'] == "logout") {
-                echo "<p style='color: green; margin-bottom: 10px; font-size: 12px;'>Anda telah berhasil logout</p>";
-            } else if ($_GET['pesan'] == "belum_login") {
-                echo "<p style='color: red; margin-bottom: 10px; font-size: 12px;'>Anda harus login untuk mengakses halaman ini</p>";
-            }
-        }
+        $no = 1;
+        foreach($data_barang as $row) {
         ?>
+        <tr>
+            <td><?php echo $no++; ?></td>
+            <td><?php echo $row['kd_barang']; ?></td>
+            <td><?php echo $row['jenis']; ?></td>
+            <td><?php echo $row['nama_barang']; ?></td>
+            <td><?php echo $row['stok']; ?></td>
+            <td>Rp <?php echo number_format($row['harga_beli'], 0, ',', '.'); ?></td>
+            <td>Rp <?php echo number_format($row['harga_jual'], 0, ',', '.'); ?></td>
+            <td class="action-links">
+                <a href="edit.php?id=<?php echo $row['kd_barang']; ?>" class="edit">Edit</a>
+                <a href="hapus.php?id=<?php echo $row['kd_barang']; ?>" class="hapus" onclick="return confirm('Yakin ingin menghapus data ini?')">Hapus</a>
+            </td>
+        </tr>
+        <?php } ?>
+    </tbody>
+</table>
 
-        <form action="login-aksi.php" method="POST">
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" required>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-            <button type="reset" class="btn btn-primary" style="background-color: #5bc0de;">Reset</button>
-        </form>
-    </div>
-</body>
-</html>
+<?php include '../footer.php'; ?>
